@@ -1,0 +1,352 @@
+/* One column on phones; on wider screens the current conditions sit beside the 5-day forecast. */
+.weather-layout {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 760px) {
+    .weather-layout {
+        grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .weather-layout .hourly,
+    .weather-layout .details {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ---------- Weather icons ---------- */
+
+.weather-icon {
+    flex: none;
+    width: 24px;
+    height: 24px;
+}
+
+.weather-icon--sun { color: var(--sun); }
+.weather-icon--partly { color: #ffe7b0; }
+.weather-icon--moon,
+.weather-icon--partly-night { color: var(--moon); }
+
+/* ---------- Current conditions ---------- */
+
+.current {
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    padding: 6px 2px;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.18);
+}
+
+.current__place {
+    font: 600 clamp(1.6rem, 4vw, 2.2rem)/1.1 var(--font-display);
+    letter-spacing: -0.02em;
+}
+
+.current__place span {
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.current__meta {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+}
+
+.current__now {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 6px;
+}
+
+.current__icon {
+    width: clamp(56px, 10vw, 84px);
+    height: clamp(56px, 10vw, 84px);
+    stroke-width: 1.4;
+}
+
+.current__temp {
+    font: 600 clamp(4.5rem, 13vw, 7.5rem)/0.95 var(--font-display);
+    letter-spacing: -0.05em;
+    font-variant-numeric: tabular-nums;
+}
+
+.current__temp sup {
+    margin-left: 4px;
+    font-size: 0.32em;
+    font-weight: 400;
+    letter-spacing: 0;
+    vertical-align: 1.9em;
+}
+
+.current__condition {
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.current__range {
+    display: flex;
+    gap: 14px;
+    font: 500 0.9rem var(--font-mono);
+    color: var(--text-muted);
+}
+
+/* ---------- 5-day forecast ---------- */
+
+.daily__row {
+    display: grid;
+    grid-template-columns: 52px 24px 40px 34px minmax(40px, 1fr) 34px;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-variant-numeric: tabular-nums;
+}
+
+.daily__row:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
+
+.daily__day {
+    font-weight: 600;
+}
+
+.daily__rain,
+.hourly__rain {
+    font: 500 0.75rem var(--font-mono);
+    color: var(--rain);
+}
+
+.daily__low,
+.daily__high {
+    font: 500 0.9rem var(--font-mono);
+}
+
+.daily__low {
+    text-align: right;
+    color: var(--text-muted);
+}
+
+.daily__range {
+    position: relative;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.daily__range i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    min-width: 6px;
+    border-radius: 3px;
+    background: var(--range);
+}
+
+/* ---------- Next 24 hours ---------- */
+
+.hourly__list {
+    /* Keeps the visually hidden labels inside the scrolling strip instead of widening the page. */
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(64px, 1fr);
+    gap: 4px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.hourly__slot {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 8px 4px;
+    border-radius: var(--radius-md);
+    font-variant-numeric: tabular-nums;
+}
+
+.hourly__slot.is-now {
+    background: var(--control);
+}
+
+.hourly__time {
+    font: 500 0.78rem var(--font-mono);
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.hourly__temp {
+    font: 600 1.05rem var(--font-display);
+}
+
+.hourly__rain {
+    min-height: 1.1em;
+}
+
+/* ---------- Detail tiles ---------- */
+
+.details {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 760px) {
+    .details {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+    }
+}
+
+.tile--sun {
+    grid-column: span 2;
+}
+
+.tile {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+}
+
+.tile .panel__title {
+    margin-bottom: 6px;
+}
+
+.tile__value {
+    font: 600 1.6rem/1.1 var(--font-display);
+    font-variant-numeric: tabular-nums;
+}
+
+.tile__value small {
+    margin-left: 3px;
+    font: 500 0.85rem var(--font-mono);
+    color: var(--text-muted);
+}
+
+.tile__note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.meter {
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.meter i {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    background: var(--rain);
+}
+
+.wind {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.wind__compass {
+    flex: none;
+    width: 64px;
+    height: 64px;
+}
+
+.wind__compass circle {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.3);
+}
+
+.wind__compass text {
+    font: 500 8px var(--font-mono);
+    fill: var(--text-muted);
+    text-anchor: middle;
+}
+
+.wind__arrow {
+    fill: var(--text);
+}
+
+.wind__tail {
+    stroke: var(--text);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.sun {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px 18px;
+    align-items: end;
+}
+
+@media (max-width: 420px) {
+    .sun {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.sun__arc {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+}
+
+.sun__horizon {
+    stroke: rgba(255, 255, 255, 0.35);
+}
+
+.sun__path {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-width: 1.5;
+    stroke-dasharray: 3 5;
+}
+
+.sun__travelled {
+    fill: none;
+    stroke: var(--sun);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
+.sun__dot {
+    fill: var(--sun);
+}
+
+.sun__dot.is-down {
+    fill: rgba(255, 255, 255, 0.55);
+}
+
+.sun__info {
+    display: grid;
+    gap: 6px;
+}
+
+.sun__times {
+    display: grid;
+    gap: 4px;
+    font-size: 0.88rem;
+}
+
+.sun__times div {
+    display: flex;
+    gap: 6px;
+}
+
+.sun__times dt {
+    color: var(--text-muted);
+}
+
+.sun__times dd {
+    font-family: var(--font-mono);
+    font-weight: 500;
+}

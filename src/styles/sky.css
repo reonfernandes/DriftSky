@@ -1,0 +1,172 @@
+/*
+ * The sky is two layers: a gradient for the time of day, then a tint for the condition
+ * (grey for cloud and rain, darker for storms, pale for fog). Effects sit on top.
+ */
+.sky {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--sky);
+
+    --sky: linear-gradient(180deg, #2f6db5 0%, #4f8fd0 55%, #8dbbe6 100%);
+    --tint: transparent;
+    --tint-opacity: 0;
+}
+
+.sky--dawn {
+    --sky: linear-gradient(180deg, #27365a 0%, #5b6590 50%, #b88f9e 82%, #dca48c 100%);
+}
+.sky--day {
+    --sky: linear-gradient(180deg, #2c66aa 0%, #4a87c8 55%, #7fb0dd 100%);
+}
+.sky--dusk {
+    --sky: linear-gradient(180deg, #182553 0%, #4c3f7c 50%, #b2667a 85%, #e08b66 100%);
+}
+.sky--night {
+    --sky: linear-gradient(180deg, #050b1c 0%, #0e1a3d 60%, #1b2c58 100%);
+}
+
+.sky--cloudy { --tint: #56667a; --tint-opacity: 0.7; }
+.sky--rain   { --tint: #3f4e61; --tint-opacity: 0.78; }
+.sky--storm  { --tint: #232c3a; --tint-opacity: 0.85; }
+.sky--snow   { --tint: #6a7a96; --tint-opacity: 0.5; }
+.sky--fog    { --tint: #8a94a2; --tint-opacity: 0.62; }
+.sky--partly { --tint: #56667a; --tint-opacity: 0.2; }
+
+/* At night a grey tint would brighten the sky, so use darker tints. */
+.sky--night.sky--cloudy { --tint: #161d2a; --tint-opacity: 0.6; }
+.sky--night.sky--rain   { --tint: #121822; --tint-opacity: 0.65; }
+.sky--night.sky--storm  { --tint: #0b0f17; --tint-opacity: 0.7; }
+.sky--night.sky--snow   { --tint: #2a3550; --tint-opacity: 0.5; }
+.sky--night.sky--fog    { --tint: #2b3240; --tint-opacity: 0.6; }
+
+.sky__tint {
+    position: absolute;
+    inset: 0;
+    background: var(--tint);
+    opacity: var(--tint-opacity);
+    transition: opacity 0.6s ease, background-color 0.6s ease;
+}
+
+.sky__stars,
+.sky__rain,
+.sky__snow,
+.sky__fog,
+.sky__flash {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+/* Clouds: soft blurred ellipses drifting slowly sideways. */
+.sky__cloud {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0));
+    opacity: 0.35;
+    animation: sky-drift 48s ease-in-out infinite alternate;
+    transition: opacity 0.8s ease;
+}
+.sky__cloud--1 { width: 70vw; height: 32vh; top: -8vh; left: -10vw; }
+.sky__cloud--2 { width: 60vw; height: 26vh; top: 22vh; right: -20vw; animation-duration: 64s; animation-direction: alternate-reverse; }
+.sky__cloud--3 { width: 80vw; height: 34vh; bottom: -10vh; left: 10vw; animation-duration: 72s; }
+
+.sky--partly .sky__cloud,
+.sky--cloudy .sky__cloud,
+.sky--rain .sky__cloud,
+.sky--snow .sky__cloud,
+.sky--storm .sky__cloud {
+    opacity: 1;
+}
+.sky--night .sky__cloud {
+    opacity: 0.2;
+}
+
+@keyframes sky-drift {
+    from { transform: translateX(-6%); }
+    to { transform: translateX(8%); }
+}
+
+.sky__stars {
+    background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.9) 1px, transparent 1.5px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.5) 0.8px, transparent 1.2px);
+    background-size: 140px 120px, 70px 90px;
+    background-position: 10px 20px, 40px 60px;
+    mask-image: linear-gradient(180deg, #000 0%, transparent 75%);
+}
+.sky--night.sky--clear .sky__stars,
+.sky--night.sky--partly .sky__stars {
+    opacity: 1;
+}
+.sky--dusk.sky--clear .sky__stars {
+    opacity: 0.4;
+}
+
+.sky__rain {
+    background-image: repeating-linear-gradient(
+        104deg,
+        transparent 0 22px,
+        rgba(255, 255, 255, 0.16) 22px 23px,
+        transparent 23px 47px
+    );
+    background-size: 100% 140px;
+    animation: sky-rain 0.5s linear infinite;
+}
+.sky--rain .sky__rain,
+.sky--storm .sky__rain {
+    opacity: 1;
+}
+
+@keyframes sky-rain {
+    to { background-position: -38px 140px; }
+}
+
+.sky__snow {
+    background-image:
+        radial-gradient(circle, rgba(255, 255, 255, 0.85) 1.5px, transparent 2px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.55) 1px, transparent 1.5px);
+    background-size: 90px 90px, 55px 55px;
+    background-position: 0 0, 25px 30px;
+    animation: sky-snow 9s linear infinite;
+}
+.sky--snow .sky__snow {
+    opacity: 1;
+}
+
+@keyframes sky-snow {
+    to { background-position: 30px 90px, 10px 85px; }
+}
+
+.sky__fog {
+    background:
+        linear-gradient(180deg, transparent 20%, rgba(255, 255, 255, 0.14) 40%, transparent 55%),
+        linear-gradient(180deg, transparent 55%, rgba(255, 255, 255, 0.18) 75%, transparent 95%);
+    animation: sky-drift 30s ease-in-out infinite alternate;
+}
+.sky--fog .sky__fog {
+    opacity: 1;
+}
+
+/* A brief, rare flash of lightning during storms. */
+.sky__flash {
+    background: rgba(255, 255, 255, 0.5);
+}
+.sky--storm .sky__flash {
+    animation: sky-flash 11s linear infinite;
+}
+
+@keyframes sky-flash {
+    0%, 93%, 95%, 100% { opacity: 0; }
+    93.5% { opacity: 0.5; }
+    94.5% { opacity: 0.25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sky * {
+        animation: none !important;
+    }
+}
